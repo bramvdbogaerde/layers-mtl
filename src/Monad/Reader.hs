@@ -16,7 +16,6 @@
 #endif
 
 #include "docmacros.h"
-#include "overlap.h"
 
 {-|
 
@@ -169,7 +168,7 @@ instance MonadReader r (f (g m)) => MonadReader r (ComposeT f g m) where
 
 #endif
 ------------------------------------------------------------------------------
-instance __OVERLAPPABLE__
+instance {-# OVERLAPPABLE #-}
     (MonadTrans t, MInvariant t, MonadReader r m, Monad (t m))
   =>
     MonadReader r (t m)

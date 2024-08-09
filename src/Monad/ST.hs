@@ -8,7 +8,6 @@
 {-# LANGUAGE UndecidableInstances #-}
 
 #include "docmacros.h"
-#include "overlap.h"
 
 {-|
 
@@ -187,7 +186,7 @@ instance MonadST ref (f (g m)) => MonadST ref (ComposeT f g m) where
 
 #endif
 ------------------------------------------------------------------------------
-instance __OVERLAPPABLE__ (MonadTrans t, Monad (t m), MonadST ref m) =>
+instance {-# OVERLAPPABLE #-} (MonadTrans t, Monad (t m), MonadST ref m) =>
     MonadST ref (t m)
   where
     newRef = lift . newRef

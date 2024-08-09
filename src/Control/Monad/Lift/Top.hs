@@ -8,12 +8,11 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE ConstraintKinds #-}
 
 #ifdef LANGUAGE_SafeHaskell
 {-# LANGUAGE Trustworthy #-}
 #endif
-
-#include "newtypec.h"
 
 {-|
 
@@ -67,7 +66,7 @@ import           Control.Monad.Lift.Internal (coercePeelI)
 
 
 ------------------------------------------------------------------------------
-newtypeC(MonadTop t m, MonadInner m (t m))
+type MonadTop t m = MonadInner m (t m)
 
 
 ------------------------------------------------------------------------------
@@ -76,7 +75,7 @@ liftT = liftI
 
 
 ------------------------------------------------------------------------------
-newtypeC(MonadTopControl t m, (MonadInnerControl m (t m), MonadTop t m))
+type MonadTopControl t m = (MonadInnerControl m (t m), MonadTop t m)
 
 
 ------------------------------------------------------------------------------
@@ -149,11 +148,11 @@ liftDiscardT = liftDiscardI
 
 
 ------------------------------------------------------------------------------
-newtypeC(MonadTopInvariant n t m,
+type MonadTopInvariant n t m =
     ( MonadInnerInvariant n (t n) m (t m)
     , MonadTop t m
     , MonadTop t n
-    ))
+    )
 
 
 ------------------------------------------------------------------------------
@@ -166,12 +165,12 @@ hoistisoT = hoistisoI
 
 
 ------------------------------------------------------------------------------
-newtypeC(MonadTopFunctor n t m,
+type MonadTopFunctor n t m =
     ( MonadInnerFunctor n (t n) m (t m)
     , MonadTop t m
     , MonadTop t n
     , MonadTopInvariant n t m
-    ))
+    )
 
 
 ------------------------------------------------------------------------------

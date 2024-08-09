@@ -10,8 +10,6 @@
 {-# OPTIONS_GHC -fno-warn-warnings-deprecations #-}
 
 #include "docmacros.h"
-#include "newtypec.h"
-#include "overlap.h"
 
 {-|
 
@@ -242,7 +240,7 @@ instance MonadRecover e (f (g m)) => MonadRecover e (ComposeT f g m) where
 
 #endif
 ------------------------------------------------------------------------------
-instance __OVERLAPPABLE__
+instance {-# OVERLAPPABLE #-}
     (MonadTransControl t, MonadRecover e m, MonadAbort e (t m))
   =>
     MonadRecover e (t m)

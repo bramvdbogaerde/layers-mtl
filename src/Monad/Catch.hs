@@ -6,9 +6,9 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE ConstraintKinds #-}
 
 #include "docmacros.h"
-#include "newtypec.h"
 
 {-|
 
@@ -69,7 +69,7 @@ import           Monad.Throw (throw)
 -- @e@ is fixed to 'SomeException'. It represents the class of monads which
 -- support some sort of 'Control.Exception.catch'-like operation to recover
 -- from failures caused by a call to 'Monad.Throw.throw'.
-newtypeC(MonadCatch m, MonadRecover SomeException m)
+type MonadCatch m = (MonadRecover SomeException m)
 
 
 ------------------------------------------------------------------------------

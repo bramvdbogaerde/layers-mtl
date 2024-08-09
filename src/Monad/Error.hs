@@ -4,11 +4,11 @@
 {-# LANGUAGE MonoLocalBinds #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE ConstraintKinds #-}
 
 {-# OPTIONS_GHC -fno-warn-warnings-deprecations #-}
 
 #include "docmacros.h"
-#include "newtypec.h"
 
 {-|
 
@@ -70,7 +70,7 @@ import           Control.Monad.Trans.Error (Error (..))
 -- constructor other than @'Either' 'String'@ or
 -- @'Either' 'Control.Exception.IOError'@. In these cases you will have to
 -- explicitly define instances of the 'Error' and\/or 'MonadError' classes.
-newtypeC(MonadError e m, MonadRecover e m)
+type MonadError e m = MonadRecover e m
 
 
 ------------------------------------------------------------------------------

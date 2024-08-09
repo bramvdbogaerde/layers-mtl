@@ -16,7 +16,6 @@
 #endif
 
 #include "docmacros.h"
-#include "overlap.h"
 
 {-|
 
@@ -188,7 +187,7 @@ instance MonadWriter w (f (g m)) => MonadWriter w (ComposeT f g m) where
 
 #endif
 ------------------------------------------------------------------------------
-instance __OVERLAPPABLE__ (MonadTrans t, Monad (t m), MonadWriter w m) =>
+instance {-# OVERLAPPABLE #-} (MonadTrans t, Monad (t m), MonadWriter w m) =>
     MonadWriter w (t m)
   where
     writer = lift . writer

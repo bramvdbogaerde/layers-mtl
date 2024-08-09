@@ -16,7 +16,6 @@
 #endif
 
 #include "docmacros.h"
-#include "overlap.h"
 
 {-|
 
@@ -176,7 +175,7 @@ instance MonadState s (f (g m)) => MonadState s (ComposeT f g m) where
 
 #endif
 ------------------------------------------------------------------------------
-instance __OVERLAPPABLE__ (MonadTrans t, MonadState s m, Monad (t m)) =>
+instance {-# OVERLAPPABLE #-} (MonadTrans t, MonadState s m, Monad (t m)) =>
     MonadState s (t m)
   where
     state = lift . state

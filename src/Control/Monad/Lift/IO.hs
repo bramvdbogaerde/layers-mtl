@@ -7,13 +7,13 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE ConstraintKinds #-}
 
 #ifdef LANGUAGE_SafeHaskell
 {-# LANGUAGE Trustworthy #-}
 #endif
 
 #include "docmacros.h"
-#include "newtypec.h"
 
 {-|
 
@@ -100,7 +100,7 @@ import           Control.Monad.Lift.Internal (coercePeelI)
 -- <Control-Monad-Lift-Base.html base> (or indeed any \"base\" monad @m@ that
 -- satisfies the constraint @'MonadInner' 'IO' m@) is isomatically an instance
 -- of 'MonadIO'.
-newtypeC(MonadIO m, MonadInner IO m)
+type MonadIO m = MonadInner IO m
 
 
 ------------------------------------------------------------------------------
@@ -119,7 +119,7 @@ liftIO = liftI
 -- <Control-Monad-Lift-Base.html base> (or indeed any \"base\" monad @m@ that
 -- satisfies the constraint @'MonadInner' 'IO' m@) is isomatically an instance
 -- of 'MonadIO'.
-newtypeC(MonadIOControl m, MonadInnerControl IO m)
+type MonadIOControl m = MonadInnerControl IO m
 
 
 ------------------------------------------------------------------------------
@@ -190,7 +190,7 @@ liftDiscardIO = liftDiscardI
 
 
 ------------------------------------------------------------------------------
-newtypeC(MonadIOInvariant j n m, MonadInnerInvariant j n IO m)
+type MonadIOInvariant j n m = ( MonadInnerInvariant j n IO m )
 
 
 ------------------------------------------------------------------------------
@@ -203,7 +203,7 @@ hoistisoIO = hoistisoI
 
 
 ------------------------------------------------------------------------------
-newtypeC(MonadIOFunctor j n m, MonadInnerFunctor j n IO m)
+type MonadIOFunctor j n m = ( MonadInnerFunctor j n IO m )
 
 
 ------------------------------------------------------------------------------

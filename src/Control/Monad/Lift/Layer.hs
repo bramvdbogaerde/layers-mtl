@@ -9,13 +9,12 @@
 {-# LANGUAGE OverlappingInstances #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE ConstraintKinds #-}
 
 #ifdef LANGUAGE_SafeHaskell
 {-# LANGUAGE Trustworthy #-}
 #endif
 
-#include "newtypec.h"
-#include "overlap.h"
 
 {-|
 
@@ -78,7 +77,7 @@ instance MonadInner i (t i) => MonadLayer i t (t i)
 
 
 ------------------------------------------------------------------------------
-instance __OVERLAPPABLE__ (MonadLayer i s m, MonadInner (s i) (t m))
+instance {-# OVERLAPPABLE #-} (MonadLayer i s m, MonadInner (s i) (t m))
     => MonadLayer i s (t m)
 
 
@@ -88,10 +87,10 @@ liftL = liftI
 
 
 ------------------------------------------------------------------------------
-newtypeC(MonadLayerControl i t m,
+type MonadLayerControl i t m =
     ( MonadInnerControl (t i) m
     , MonadLayer i t m
-    ))
+    )
 
 
 ------------------------------------------------------------------------------
@@ -167,10 +166,10 @@ liftDiscardL = liftDiscardI
 
 
 ------------------------------------------------------------------------------
-newtypeC(MonadLayerInvariant j n i t m,
+type MonadLayerInvariant j n i t m =
     ( MonadInnerInvariant j n (t i) m
     , MonadLayer i t m
-    ))
+    )
 
 
 ------------------------------------------------------------------------------
@@ -183,11 +182,11 @@ hoistisoL = hoistisoI
 
 
 ------------------------------------------------------------------------------
-newtypeC(MonadLayerFunctor j n i t m,
+type MonadLayerFunctor j n i t m =
     ( MonadInnerFunctor j n (t i) m
     , MonadLayer i t m
     , MonadLayerInvariant j n i t m
-    ))
+    )
 
 
 ------------------------------------------------------------------------------

@@ -6,7 +6,6 @@
 {-# LANGUAGE UndecidableInstances #-}
 
 #include "docmacros.h"
-#include "overlap.h"
 
 {-|
 
@@ -117,7 +116,7 @@ instance MonadCont (f (g m)) => MonadCont (ComposeT f g m) where
 
 #endif
 ------------------------------------------------------------------------------
-instance __OVERLAPPABLE__ (MonadTransControl t, MonadCont m, Monad (t m)) =>
+instance {-# OVERLAPPABLE #-} (MonadTransControl t, MonadCont m, Monad (t m)) =>
     MonadCont (t m)
   where
     callCC f = liftControl (\peel -> callCC $ \c -> peel . f $ \a ->

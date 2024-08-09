@@ -8,7 +8,6 @@
 {-# OPTIONS_GHC -fno-warn-warnings-deprecations #-}
 
 #include "docmacros.h"
-#include "overlap.h"
 
 {-|
 
@@ -198,7 +197,7 @@ instance MonadAbort e (f (g m)) => MonadAbort e (ComposeT f g m) where
 
 #endif
 ------------------------------------------------------------------------------
-instance __OVERLAPPABLE__ (MonadTrans t, MonadAbort e m, Monad (t m)) =>
+instance {-# OVERLAPPABLE #-} (MonadTrans t, MonadAbort e m, Monad (t m)) =>
     MonadAbort e (t m)
   where
     abort = lift . abort

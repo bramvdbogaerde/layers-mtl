@@ -9,7 +9,6 @@
 {-# LANGUAGE UndecidableInstances #-}
 
 #include "docmacros.h"
-#include "overlap.h"
 
 {-|
 
@@ -222,7 +221,7 @@ data Pt (t :: (* -> *) -> * -> *) = Pt
 
 
 ------------------------------------------------------------------------------
-instance __OVERLAPPABLE__ (MonadTransControl t, MonadMask (t m), MonadTry m)
+instance {-# OVERLAPPABLE #-} (MonadTransControl t, MonadMask (t m), MonadTry m)
   =>
     MonadTry (t m)
   where

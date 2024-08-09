@@ -9,6 +9,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE ConstraintKinds #-}
 
 {-# OPTIONS_GHC -fno-warn-warnings-deprecations #-}
 
@@ -22,7 +23,6 @@
 
 #include "docmacros.h"
 #include "newtypec.h"
-#include "overlap.h"
 
 {-|
 
@@ -770,7 +770,7 @@ instance Monad m => MonadInner m m where
 
 
 ------------------------------------------------------------------------------
-instance __OVERLAPPABLE__
+instance {-# OVERLAPPABLE #-}
     (Monad i, Monad (t m), MonadInner i m, MonadTrans t, tm ~ t m)
   =>
     MonadInner i tm
@@ -929,7 +929,7 @@ instance MonadInner m m => MonadInnerControl m m where
 
 
 ------------------------------------------------------------------------------
-instance __OVERLAPPABLE__
+instance {-# OVERLAPPABLE #-}
     ( MonadInner i (t m)
     , MonadInnerControl i m
     , MonadTransControl t
@@ -1140,7 +1140,7 @@ instance (MonadInner m m, MonadInner n n) => MonadInnerInvariant n n m m where
 
 
 ------------------------------------------------------------------------------
-instance __OVERLAPPABLE__
+instance {-# OVERLAPPABLE #-}
     ( MonadInner i (t m), MonadInner j (t n)
     , MonadInnerInvariant j n i m, MonadInnerInvariant i m j n
     , MInvariant t
@@ -1200,7 +1200,7 @@ instance MonadInnerInvariant n n m m => MonadInnerFunctor n n m m where
 
 
 ------------------------------------------------------------------------------
-instance __OVERLAPPABLE__
+instance {-# OVERLAPPABLE #-}
     ( MonadInnerFunctor j n i m, MFunctor t
     , MonadInnerInvariant j (t n) i (t m)
     , tn ~ t n, tm ~ t m
@@ -1981,19 +1981,19 @@ defaultLiftI = from1 . liftI
 -- us write the type signatures of 'defaultSuspendI', 'defaultResumeI',
 -- 'defaultCaptureI' and 'defaultExtractI'.
 #ifdef ClosedTypeFamilies
-newtypeC(DefaultMonadInnerControl i m,
+type DefaultMonadInnerControl i m =
     ( MonadInner i m
     , DefaultMonadInner i m
     , MonadInnerControl i (Codomain1 m)
     , OuterResult i m ~ OuterResult i (Codomain1 m)
     , OuterState i m ~ OuterState i (Codomain1 m)
-    ))
+    )
 #else
-newtypeC(DefaultMonadInnerControl i m,
+type DefaultMonadInnerControl i m =
     ( MonadInner i m
     , DefaultMonadInner i m
     , MonadInnerControl i (Codomain1 m)
-    ))
+    )
 #endif
 
 
@@ -2089,13 +2089,13 @@ defaultMapI i _ f = to . mapI i (Pm :: Pm (Codomain1 m)) f . from
 ------------------------------------------------------------------------------
 -- | A UG(glasgow_exts.html#the-constraint-kind,constraint synonym) that helps
 -- us write the type signature of 'defaultHoistisoI'.
-newtypeC(DefaultMonadInnerInvariant j n i m,
+type DefaultMonadInnerInvariant j n i m =
     ( MonadInner i m
     , MonadInner j n
     , DefaultMonadInner i m
     , DefaultMonadInner j n
     , MonadInnerInvariant j (Codomain1 n) i (Codomain1 m)
-    ))
+    )
 
 
 ------------------------------------------------------------------------------
@@ -2120,11 +2120,11 @@ defaultHoistisoI f g m = from1 (hoistisoI f g (to1 m))
 ------------------------------------------------------------------------------
 -- | A UG(glasgow_exts.html#the-constraint-kind,constraint synonym) that helps
 -- us write the type signature of 'defaultHoistI.
-newtypeC(DefaultMonadInnerFunctor j n i m,
+type DefaultMonadInnerFunctor j n i m =
     ( MonadInnerInvariant j n i m
     , DefaultMonadInnerInvariant j n i m
     , MonadInnerFunctor j (Codomain1 n) i (Codomain1 m)
-    ))
+    )
 
 
 ------------------------------------------------------------------------------

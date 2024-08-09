@@ -15,7 +15,6 @@
 #endif
 
 #include "docmacros.h"
-#include "overlap.h"
 
 {-|
 
@@ -251,7 +250,7 @@ instance MonadMask IO where
 
 
 ------------------------------------------------------------------------------
-instance __OVERLAPPABLE__
+instance {-# OVERLAPPABLE #-}
     (MonadTrans t, MInvariant t, MonadMask m, Monad (t m))
   =>
     MonadMask (t m)

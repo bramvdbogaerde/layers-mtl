@@ -7,7 +7,6 @@
 {-# LANGUAGE UndecidableInstances #-}
 
 #include "docmacros.h"
-#include "overlap.h"
 
 {-|
 
@@ -162,7 +161,7 @@ instance MonadFork (f (g m)) => MonadFork (ComposeT f g m) where
 
 #endif
 ------------------------------------------------------------------------------
-instance __OVERLAPPABLE__ (MonadTransControl t, MonadFork m, MonadMask (t m))
+instance {-# OVERLAPPABLE #-} (MonadTransControl t, MonadFork m, MonadMask (t m))
   =>
     MonadFork (t m)
   where

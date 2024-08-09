@@ -1,13 +1,14 @@
+cabal-version:  2.2
+
 name:           layers
 version:        1.0.0
 synopsis:       Modular type class machinery for monad transformer stacks.
-license:        BSD3
+license:        BSD-3-Clause
 license-file:   LICENSE
 author:         Shane O'Brien
 maintainer:     shane@duairc.com
 stability:      Experimental
 category:       Control
-cabal-version:  >= 1.6
 homepage:       https://github.com/duairc/layers
 bug-reports:    https://github.com/duairc/layers/issues
 build-type:     Simple
@@ -113,12 +114,15 @@ Library
     Monad.Throw
     Monad.Try
     Monad.Writer
+  
+  default-language: Haskell2010
+
 
   other-modules:
     Control.Monad.Lift.Internal
 
   build-depends:
-    base >= 4 && < 5,
+    base >= 4.17 && < 5,
     mmorph >= 1.0 && < 1.2,
     transformers >= 0.2 && < 0.6
 

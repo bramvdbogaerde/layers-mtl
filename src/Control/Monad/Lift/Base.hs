@@ -8,12 +8,11 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE ConstraintKinds #-}
 
 #ifdef LANGUAGE_SafeHaskell
 {-# LANGUAGE Trustworthy #-}
 #endif
-
-#include "newtypec.h"
 
 {-|
 
@@ -139,7 +138,7 @@ liftB = liftI
 
 
 ------------------------------------------------------------------------------
-newtypeC(MonadBaseControl b m, (MonadInnerControl b m, MonadBase b m))
+type MonadBaseControl b m = (MonadInnerControl b m, MonadBase b m)
 
 
 ------------------------------------------------------------------------------
@@ -214,10 +213,10 @@ liftDiscardB = liftDiscardI
 
 
 ------------------------------------------------------------------------------
-newtypeC(MonadBaseInvariant j n b m,
+type MonadBaseInvariant j n b m =
     ( MonadInnerInvariant j n b m
     , MonadBase b m
-    ))
+    )
 
 
 ------------------------------------------------------------------------------
@@ -230,7 +229,7 @@ hoistisoB = hoistisoI
 
 
 ------------------------------------------------------------------------------
-newtypeC(MonadBaseFunctor j n b m, (MonadInnerFunctor j n b m, MonadBase b m))
+type MonadBaseFunctor j n b m = (MonadInnerFunctor j n b m, MonadBase b m)
 
 
 ------------------------------------------------------------------------------

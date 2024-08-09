@@ -3,14 +3,13 @@
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE ConstraintKinds #-}
 
 #ifdef LANGUAGE_SafeHaskell
 {-# LANGUAGE Safe #-}
 #endif
 
 #include "docmacros.h"
-#include "newtypec.h"
-#include "overlap.h"
 
 {-|
 
@@ -53,4 +52,4 @@ import           Monad.Writer
 -- | 'MonadRWS' is simply a
 -- UG(glasgow_exts.html#the-constraint-kind,constraint synonym) for the
 -- combination of 'MonadReader', 'MonadState' and 'MonadWriter'.
-newtypeC(MonadRWS r w s m, (MonadReader r m, MonadWriter w m, MonadState s m))
+type MonadRWS r w s m = (MonadReader r m, MonadWriter w m, MonadState s m)
