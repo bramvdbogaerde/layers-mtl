@@ -48,14 +48,8 @@ import           Control.Monad.Trans.Compose (ComposeT (ComposeT))
 
 #endif
 -- transformers --------------------------------------------------------------
-#if !MIN_VERSION_transformers(0, 6, 0)
-import           Control.Monad.Trans.Error (ErrorT)
-#endif
-#if MIN_VERSION_transformers(0, 4, 0)
 import           Control.Monad.Trans.Except (ExceptT)
-#endif
 import           Control.Monad.Trans.Identity (IdentityT)
-import           Control.Monad.Trans.List (ListT)
 import           Control.Monad.Trans.Maybe (MaybeT)
 import           Control.Monad.Trans.Reader (ReaderT)
 import qualified Control.Monad.Trans.RWS.Lazy as L (RWST)
@@ -75,14 +69,8 @@ type LayerEffects t a = (LayerResult t a, LayerState t)
 ------------------------------------------------------------------------------
 -- | The G(layerresult,layer result) of @t@.
 type family LayerResult (t :: (* -> *) -> * -> *) :: * -> *
-#if !MIN_VERSION_transformers(0, 6, 0)
-type instance LayerResult (ErrorT e) = Either e
-#endif
-#if MIN_VERSION_transformers(0, 4, 0)
 type instance LayerResult (ExceptT e) = Either e
-#endif
 type instance LayerResult IdentityT = Identity
-type instance LayerResult ListT = []
 type instance LayerResult MaybeT = Maybe
 type instance LayerResult (ReaderT r) = Identity
 type instance LayerResult (StateT s) = Identity
@@ -99,14 +87,8 @@ type instance LayerResult (ComposeT f g) = ComposeResult2 f g
 ------------------------------------------------------------------------------
 -- | The G(layerstate,layer state) of @t@.
 type family LayerState (t :: (* -> *) -> * -> *) :: *
-#if !MIN_VERSION_transformers(0, 6, 0)
-type instance LayerState (ErrorT e) = ()
-#endif
-#if MIN_VERSION_transformers(0, 4, 0)
 type instance LayerState (ExceptT e) = ()
-#endif
 type instance LayerState IdentityT = ()
-type instance LayerState ListT = ()
 type instance LayerState MaybeT = ()
 type instance LayerState (ReaderT r) = r
 type instance LayerState (StateT s) = s

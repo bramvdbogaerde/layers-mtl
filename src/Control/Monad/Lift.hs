@@ -162,14 +162,8 @@ import           Control.Monad.Trans.Compose (ComposeT)
 -- transformers --------------------------------------------------------------
 import           Control.Monad.Trans.Class (MonadTrans (lift))
 import           Control.Monad.Trans.Cont (ContT (ContT))
-#if !MIN_VERSION_transformers(0, 6, 0)
-import           Control.Monad.Trans.Error (Error, ErrorT (ErrorT))
-#endif
-#if MIN_VERSION_transformers(0, 4, 0)
 import           Control.Monad.Trans.Except (ExceptT (ExceptT))
-#endif
 import           Control.Monad.Trans.Identity (IdentityT (IdentityT))
-import           Control.Monad.Trans.List (ListT (ListT))
 import           Control.Monad.Trans.Maybe (MaybeT (MaybeT))
 import           Control.Monad.Trans.Reader (ReaderT (ReaderT))
 import qualified Control.Monad.Trans.RWS.Lazy as L (RWST (RWST))
@@ -446,17 +440,6 @@ class (MonadTrans t, Functor (LayerResult t)) => MonadTransControl t where
     extract :: proxy t -> LayerResult t a -> Either (LayerResult t b) a
 
 
-#if !MIN_VERSION_transformers(0, 6, 0)
-------------------------------------------------------------------------------
-instance Error e => MonadTransControl (ErrorT e) where
-    suspend (ErrorT m) _ = liftM (\a -> (a, ())) m
-    resume (a, _) = ErrorT $ return a
-    capture = return ()
-    extract _ = either (Left . Left) Right
-
-
-#endif
-#if MIN_VERSION_transformers(0, 4, 0)
 ------------------------------------------------------------------------------
 instance MonadTransControl (ExceptT e) where
     suspend (ExceptT m) _ = liftM (\a -> (a, ())) m
@@ -464,23 +447,12 @@ instance MonadTransControl (ExceptT e) where
     capture = return ()
     extract _ = either (Left . Left) Right
 
-
-#endif
 ------------------------------------------------------------------------------
 instance MonadTransControl IdentityT where
     suspend (IdentityT m) _ = liftM (\a -> (Identity a, ())) m
     resume (Identity a, _) = IdentityT $ return a
     capture = return ()
     extract _ (Identity a) = Right a
-
-
-------------------------------------------------------------------------------
-instance MonadTransControl ListT where
-    suspend (ListT m) _ = liftM (\a -> (a, ())) m
-    resume (a, _) = ListT $ return a
-    capture = return ()
-    extract _ = foldr (const . Right) (Left [])
-
 
 ------------------------------------------------------------------------------
 instance MonadTransControl MaybeT where
@@ -663,31 +635,15 @@ class MInvariant t where
 instance MInvariant (ContT r) where
     hoistiso f g (ContT m) = ContT $ f . m . (g .)
 
-
-#if !MIN_VERSION_transformers(0, 6, 0)
 ------------------------------------------------------------------------------
-instance MInvariant (ErrorT e) where
-    hoistiso f _ = hoist f
 
-
-#endif
-#if MIN_VERSION_transformers(0, 4, 0)
 instance MInvariant (ExceptT e) where
     hoistiso f _ = \(ExceptT m) -> ExceptT $ f m
-
-
-#endif
 
 
 ------------------------------------------------------------------------------
 instance MInvariant IdentityT where
     hoistiso f _ = hoist f
-
-
-------------------------------------------------------------------------------
-instance MInvariant ListT where
-    hoistiso f _ = \(ListT m) -> ListT $ f m
-
 
 ------------------------------------------------------------------------------
 instance MInvariant MaybeT where
