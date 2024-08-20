@@ -60,47 +60,9 @@ import qualified Control.Monad.Trans.Writer.Lazy as L (WriterT)
 import           Control.Monad.Trans.Writer.Strict (WriterT)
 
 
-------------------------------------------------------------------------------
--- | The G(layereffect,layer effects) of the @t@ G(monadlayer,layer) of the
--- monad @t m@.
-type LayerEffects t a = (LayerResult t a, LayerState t)
+-- layers -------------------------------------------------------------------- 
 
-
-------------------------------------------------------------------------------
--- | The G(layerresult,layer result) of @t@.
-type family LayerResult (t :: (* -> *) -> * -> *) :: * -> *
-type instance LayerResult (ExceptT e) = Either e
-type instance LayerResult IdentityT = Identity
-type instance LayerResult MaybeT = Maybe
-type instance LayerResult (ReaderT r) = Identity
-type instance LayerResult (StateT s) = Identity
-type instance LayerResult (L.StateT s) = Identity
-type instance LayerResult (RWST r w s) = (,) w
-type instance LayerResult (L.RWST r w s) = (,) w
-type instance LayerResult (WriterT w) = (,) w
-type instance LayerResult (L.WriterT w) = (,) w
-#if MIN_VERSION_mmorph(1, 0, 1)
-type instance LayerResult (ComposeT f g) = ComposeResult2 f g
-#endif
-
-
-------------------------------------------------------------------------------
--- | The G(layerstate,layer state) of @t@.
-type family LayerState (t :: (* -> *) -> * -> *) :: *
-type instance LayerState (ExceptT e) = ()
-type instance LayerState IdentityT = ()
-type instance LayerState MaybeT = ()
-type instance LayerState (ReaderT r) = r
-type instance LayerState (StateT s) = s
-type instance LayerState (L.StateT s) = s
-type instance LayerState (RWST r w s) = (r, s)
-type instance LayerState (L.RWST r w s) = (r, s)
-type instance LayerState (WriterT w) = ()
-type instance LayerState (L.WriterT w) = ()
-#if MIN_VERSION_mmorph(1, 0, 1)
-type instance LayerState (ComposeT f g) = (LayerState f, LayerState g)
-#endif
-
+import           Control.Monad.Lift.Class
 
 ------------------------------------------------------------------------------
 newtype ComposeResult2 u v a = ComposeResult2
