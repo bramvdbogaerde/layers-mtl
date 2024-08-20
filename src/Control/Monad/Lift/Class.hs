@@ -7,6 +7,7 @@ import           Control.Monad.Trans.Class (MonadTrans (lift))
 -- base ---------------------------------------------------------------------
 
 import           Data.Kind
+import           Data.Proxy
 
 -- auxilariy --------------------------------------------------------------- 
 
@@ -235,7 +236,7 @@ class (MonadTrans t, Functor (LayerResult t)) => MonadTransControl t where
     --    'lift' '$' do
     --        (result, _) <- 'suspend' t state
     --        'return' '$' 'extract' ('Data.Proxy.Proxy' :: 'Data.Proxy.Proxy' t) result@
-    extract :: proxy t -> LayerResult t a -> Either (LayerResult t b) a
+    extract :: Proxy t -> LayerResult t a -> Either (LayerResult t b) a
 
 
 ------------------------------------------------------------------------------

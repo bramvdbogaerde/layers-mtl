@@ -138,7 +138,7 @@ import           Data.Functor.Identity (Identity (Identity))
 #if !MIN_VERSION_base(4, 8, 0)
 import           Data.Monoid (Monoid, mempty)
 #endif
-import           Data.Kind
+import           Data.Proxy
 
 -- layers --------------------------------------------------------------------
 import           Control.Monad.Lift.Class
@@ -728,8 +728,8 @@ instance {-# OVERLAPPABLE #-}
     extractI i _ (r :: OuterResult i tm a) = either left right $
         extractI i m r'
       where
-        t = Pt :: Pt t
-        m = Pm :: Pm m
+        t = Proxy :: Proxy t
+        m = Proxy :: Proxy m
 
         ComposeResult r' = fromR r :: ComposeResult i t m a
 
@@ -754,7 +754,7 @@ instance {-# OVERLAPPABLE #-}
 
     mapI i _ (f :: a -> b) (r :: OuterResult i tm a) = toR r'
       where
-        m = Pm :: Pm m
+        m = Proxy :: Proxy m
         r' :: ComposeResult i t m b
         r' = ComposeResult $ mapI i m (first (fmap f)) r''
           where
@@ -780,13 +780,6 @@ instance
 
 
 #endif
-------------------------------------------------------------------------------
-data Pm (m :: * -> *) = Pm
-
-
-------------------------------------------------------------------------------
-data Pt (t :: (* -> *) -> * -> *) = Pt
-
 
 ------------------------------------------------------------------------------
 -- | 'liftControlI' is a composition of 'captureI', 'suspendI' and 'liftI'
@@ -800,7 +793,7 @@ data Pt (t :: (* -> *) -> * -> *) = Pt
 liftControlI :: forall i m a. MonadInnerControl i m
     => ((forall b. m b -> i (OuterEffects i m b)) -> i a)
     -> m a
-liftControlI f = captureI (Pm :: Pm i) >>= \s -> liftI $ f (flip suspendI s)
+liftControlI f = captureI (Proxy :: Proxy i) >>= \s -> liftI $ f (flip suspendI s)
 {-# INLINE liftControlI #-}
 
 
@@ -814,7 +807,7 @@ controlI :: forall i m a. MonadInnerControl i m
     => ((forall b. m b -> i (OuterEffects i m b)) -> i (OuterEffects i m a))
     -> m a
 controlI f = liftControlI (\peel -> f (coercePeelI peel))
-    >>= resumeI (Pm :: Pm i)
+    >>= resumeI (Proxy :: Proxy i)
 {-# INLINE controlI #-}
 
 
@@ -1223,7 +1216,7 @@ defaultCapture = from1 capture
 defaultExtract
     :: forall t u a b proxy. CE(DMTC(Identity), EDMTC(Identity))
     => proxy t -> LayerResult t a -> Either (LayerResult t b) a
-defaultExtract _ = extract (Pt :: Pt u)
+defaultExtract _ = extract (Proxy :: Proxy u)
 {-# INLINE defaultExtract #-}
 
 
@@ -1306,9 +1299,9 @@ defaultCapture2 = from1 $ liftM2 (,) capture (lift capture)
 defaultExtract2
     :: forall t u v a b proxy. CE(DMTC2(Identity), EDMTC2(Identity))
     => proxy t -> LayerResult t a -> Either (LayerResult t b) a
-defaultExtract2 _ (ComposeResult2 vr) = case extract (Pt :: Pt v) vr of
+defaultExtract2 _ (ComposeResult2 vr) = case extract (Proxy :: Proxy v) vr of
     Left vre -> Left (ComposeResult2 vre)
-    Right (ur, us) -> case extract (Pt :: Pt u) ur of
+    Right (ur, us) -> case extract (Proxy :: Proxy u) ur of
         Left ure -> Left $ ComposeResult2 $ fmap (const (ure, us)) vr
         Right a -> Right a
 {-# INLINE defaultExtract2 #-}
@@ -1396,11 +1389,11 @@ defaultCapture3 = from1 $
 defaultExtract3
     :: forall t u v w a b proxy. CE(DMTC3(Identity), EDMTC3(Identity))
     => proxy t -> LayerResult t a -> Either (LayerResult t b) a
-defaultExtract3 _ (ComposeResult3 wr) = case extract (Pt :: Pt w) wr of
+defaultExtract3 _ (ComposeResult3 wr) = case extract (Proxy :: Proxy w) wr of
     Left wre -> Left (ComposeResult3 wre)
-    Right (vr, vs) -> case extract (Pt :: Pt v) vr of
+    Right (vr, vs) -> case extract (Proxy :: Proxy v) vr of
         Left vre -> Left $ ComposeResult3 $ fmap (const (vre, vs)) wr
-        Right (ur, us) -> case extract (Pt :: Pt u) ur of
+        Right (ur, us) -> case extract (Proxy :: Proxy u) ur of
             Left ure -> Left $ ComposeResult3 $
                 fmap (first (fmap (const (ure, us)))) wr
             Right a -> Right a
@@ -1492,14 +1485,14 @@ defaultCapture4 = from1 $ liftM4 (,,,)
 defaultExtract4
     :: forall t u v w x a b proxy. CE(DMTC4(Identity), EDMTC4(Identity))
     => proxy t -> LayerResult t a -> Either (LayerResult t b) a
-defaultExtract4 _ (ComposeResult4 xr) = case extract (Pt :: Pt x) xr of
+defaultExtract4 _ (ComposeResult4 xr) = case extract (Proxy :: Proxy x) xr of
     Left xre -> Left $ ComposeResult4 xre
-    Right (wr, ws) -> case extract (Pt :: Pt w) wr of
+    Right (wr, ws) -> case extract (Proxy :: Proxy w) wr of
         Left wre -> Left $ ComposeResult4 $ fmap (const (wre, ws)) xr
-        Right (vr, vs) -> case extract (Pt :: Pt v) vr of
+        Right (vr, vs) -> case extract (Proxy :: Proxy v) vr of
             Left vre -> Left $ ComposeResult4 $
                 fmap (first (fmap (const (vre, vs)))) xr
-            Right (ur, us) -> case extract (Pt :: Pt u) ur of
+            Right (ur, us) -> case extract (Proxy :: Proxy u) ur of
                 Left ure -> Left $ ComposeResult4 $
                     fmap (first (fmap (first (fmap (const (ure, us)))))) xr
                 Right a -> Right a
@@ -1821,7 +1814,7 @@ defaultExtractI :: forall i m a b proxy proxy'. DefaultMonadInnerControl i m
     -> OuterResult i m a
     -> Either (OuterResult i m b) a
 defaultExtractI p _ r = either (Left . to) Right $
-    extractI p (Pm :: Pm (Codomain1 m)) (fromR r)
+    extractI p (Proxy :: Proxy (Codomain1 m)) (fromR r)
   where
     to :: OuterResult i (Codomain1 m) b -> OuterResult i m b
     to = toR
@@ -1839,7 +1832,7 @@ defaultExtractI p _ r = either (Left . to) Right $
 defaultMapI :: forall i m a b proxy proxy'. DefaultMonadInnerControl i m
     => proxy i -> proxy' m
     -> (a -> b) -> OuterResult i m a -> OuterResult i m b
-defaultMapI i _ f = to . mapI i (Pm :: Pm (Codomain1 m)) f . from
+defaultMapI i _ f = to . mapI i (Proxy :: Proxy (Codomain1 m)) f . from
   where
     to :: OuterResult i (Codomain1 m) b -> OuterResult i m b
     to = toR
