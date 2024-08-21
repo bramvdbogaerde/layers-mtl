@@ -112,6 +112,12 @@ Library
     KindSignatures
     TypeFamilies
     FlexibleContexts
+    FlexibleInstances
+    ExplicitForAll
+    ConstraintKinds
+    MultiParamTypeClasses
+    QuantifiedConstraints
+
 
   default-language: Haskell2010
 

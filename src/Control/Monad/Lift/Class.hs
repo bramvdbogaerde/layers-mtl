@@ -1,4 +1,5 @@
-module Control.Monad.Lift.Class(MonadTransControl(..), LayerEffects) where
+{-# LANGUAGE UndecidableInstances, UndecidableSuperClasses #-}
+module Control.Monad.Lift.Class(MonadTransControl(..), LayerEffects, LayerConstraint) where
 
 -- transformers --------------------------------------------------------------
 
@@ -244,3 +245,7 @@ class (MonadTrans t, Functor (LayerResult t)) => MonadTransControl t where
 -- monad @t m@.
 type LayerEffects t a = (LayerResult t a, LayerState t)
 
+-- | Generates a constraint on the @LayerResult@ and @LayerState@ 
+-- of the the given layer @t@.
+class (forall a . c a => c (LayerResult t a) :: Constraint, c (LayerState t)) => LayerConstraint (c :: Type -> Constraint)  t
+instance (forall a . c a => c (LayerResult t a) :: Constraint, c (LayerState t)) => LayerConstraint (c :: Type -> Constraint)  t
